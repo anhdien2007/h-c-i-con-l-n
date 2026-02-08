@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Math Drill – Cộng Trừ Nhân Chia (Bảng dọc)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#0b1020; --bg2:#151a2f;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.14);
+      --text:#e8ecff;
+      --muted: rgba(232,236,255,.7);
+      --ok:#4ee59a;
+      --bad:#ff5c7a;
+      --primary:#7c5cff;
+      --shadow: 0 18px 55px rgba(0,0,0,.35);
+      --sans: "Be Vietnam Pro", system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+
+      --r: 18px;
+    }
+    [data-theme="light"]{
+      --bg1:#f6f7ff; --bg2:#e9ecff;
+      --card: rgba(0,0,0,.04);
+      --card2: rgba(0,0,0,.03);
+      --stroke: rgba(0,0,0,.10);
+      --text:#0a1024;
+      --muted: rgba(10,16,36,.68);
+      --shadow: 0 16px 45px rgba(0,0,0,.12);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(124,92,255,.33), transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(78,229,154,.18), transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+    .bg{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(900px 600px at 80% 70%, rgba(255,92,122,.10), transparent 60%),
+        radial-gradient(1000px 700px at 10% 85%, rgba(255,210,106,.10), transparent 60%);
+      pointer-events:none;
+    }
+    .topbar{
+      max-width: 1100px;
+      margin: 18px auto 0;
+      padding: 0 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(78,229,154,.85));
+      color:white; font-weight:900;
+      box-shadow: var(--shadow);
+    }
+    .title{ font-weight:900; letter-spacing:.2px; }
+    .subtitle{ font-size:12px; color: var(--muted); margin-top:2px; }
+
+    .container{ max-width:1100px; margin: 14px auto 40px; padding: 0 16px; }
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--stroke);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 16px;
+    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .spread{ justify-content:space-between; }
+    .hint{ font-size:12px; color: var(--muted); line-height:1.45; margin-top:8px; }
+    .btn{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      cursor:pointer;
+      font-weight:800;
+    }
+    [data-theme="light"] .btn{ background: rgba(0,0,0,.03); }
+    .btn.primary{
+      border-color: rgba(124,92,255,.55);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(124,92,255,.55));
+      color:white;
+    }
+    .btn.ghost{ background: transparent; }
+    .pill{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 12px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .controls{ grid-template-columns: 1fr; }
+    }
+    .panel{
+      border-radius: 16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      padding: 12px;
+    }
+    label{ font-size:12px; color: var(--muted); display:block; margin-bottom:6px; font-weight:800; }
+    select, input[type="number"]{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.12);
+      color: var(--text);
+      outline:none;
+      font-weight:700;
+    }
+    [data-theme="light"] select, [data-theme="light"] input[type="number"]{ background: rgba(255,255,255,.75); }
+
+    .ops{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .chip{
+      user-select:none;
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      font-weight:800;
+      color: var(--text);
+    }
+    .chip input{ accent-color: var(--primary); }
+
+    table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      margin-top: 10px;
+    }
+    th{
+      text-align:left;
+      font-size:12px;
+      color: var(--muted);
+      font-weight:900;
+      padding: 0 10px;
+    }
+    td{
+      padding: 10px;
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--stroke);
+    }
+    tr td:first-child{ border-radius: 14px 0 0 14px; }
+    tr td:last-child{ border-radius: 0 14px 14px 0; }
+
+    .expr{
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space: nowrap;
+    }
+    .ansInput{
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 16px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.12);
+      color: var(--text);
+      outline:none;
+    }
+    [data-theme="light"] .ansInput{ background: rgba(255,255,255,.75); }
+
+    .resultCell{
+      font-family: var(--mono);
+      font-weight:900;
+      font-size: 16px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 42px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-weight: 900;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+    }
+    .badge.ok{
+      border-color: rgba(78,229,154,.55);
+      background: rgba(78,229,154,.14);
+      color: var(--ok);
+    }
+    .badge.bad{
+      border-color: rgba(255,92,122,.55);
+      background: rgba(255,92,122,.14);
+      color: var(--bad);
+    }
+
+    .scoreGrid{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .stat{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight:900;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">÷×</div>
+      <div>
+        <div class="title">Math Drill – Bảng dọc</div>
+        <div class="subtitle">Enter để chấm · xanh/đỏ · có âm thanh đúng/sai</div>
+      </div>
+    </div>
+    <div class="row">
+      <button id="btnTheme" class="btn ghost" type="button">Dark</button>
+      <button id="btnSound" class="btn ghost" type="button">Sound: ON</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="controls">
+        <div class="panel">
+          <div class="row spread">
+            <div class="pill">Chọn phép tính + số câu → bấm “Tạo đề”</div>
+            <div class="row">
+              <button id="btnNew" class="btn primary" type="button">Tạo đề</button>
+              <button id="btnReset" class="btn" type="button">Làm lại</button>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <div style="flex:1; min-width:220px;">
+              <label>Số câu</label>
+              <input id="count" type="number" min="5" max="200" value="20" />
+            </div>
+            <div style="flex:1; min-width:220px;">
+              <label>Giới hạn số (0 → N)</label>
+              <input id="maxN" type="number" min="5" max="999" value="20" />
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <div style="flex:1; min-width:220px;">
+              <label>Chia (÷) kiểu</label>
+              <select id="divMode">
+                <option value="integer" selected>Chỉ ra kết quả nguyên (không lẻ)</option>
+                <option value="decimal">Cho phép số thập phân (làm tròn 2 chữ số)</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:220px;">
+              <label>Thập phân (khi ÷ cho phép lẻ)</label>
+              <select id="decimals">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>Phép tính</label>
+            <div class="ops">
+              <label class="chip"><input type="checkbox" id="opAdd" checked /> +</label>
+              <label class="chip"><input type="checkbox" id="opSub" checked /> −</label>
+              <label class="chip"><input type="checkbox" id="opMul" checked /> ×</label>
+              <label class="chip"><input type="checkbox" id="opDiv" checked /> ÷</label>
+            </div>
+            <div class="hint">
+              Mẹo: Nếu bật ÷ kiểu “kết quả nguyên”, đề sẽ tự tạo dạng chia hết.
+              Nhập xong bấm <b>Enter</b> để chấm và tự xuống dòng.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="row spread">
+            <div class="pill">Thống kê</div>
+            <button id="btnFocus" class="btn" type="button">Focus dòng 1</button>
+          </div>
+          <div class="scoreGrid">
+            <div class="stat">Đúng: <span id="sOk">0</span></div>
+            <div class="stat">Sai: <span id="sBad">0</span></div>
+            <div class="stat">Đã làm: <span id="sDone">0</span>/<span id="sTotal">0</span></div>
+            <div class="stat">Accuracy: <span id="sAcc">0%</span></div>
+          </div>
+          <div class="hint">
+            Nếu bạn không nghe tiếng: hãy bấm 1 lần vào trang, rồi làm tiếp (browser chặn auto sound).
+          </div>
+        </div>
+      </div>
+
+      <table aria-label="Bảng câu hỏi">
+        <thead>
+          <tr>
+            <th style="width:56px;">#</th>
+            <th>Phép tính</th>
+            <th style="width:240px;">Bạn nhập</th>
+            <th style="width:180px;">Đáp án</th>
+            <th style="width:120px;">Đúng/Sai</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+
+    const $ = (id) => document.getElementById(id);
+    const must = (id) => { const el = $(id); if(!el) throw new Error('Missing #' + id); return el; };
+
+    // UI
+    const btnTheme = must('btnTheme');
+    const btnSound = must('btnSound');
+    const btnNew = must('btnNew');
+    const btnReset = must('btnReset');
+    const btnFocus = must('btnFocus');
+
+    const countEl = must('count');
+    const maxNEl = must('maxN');
+    const divModeEl = must('divMode');
+    const decimalsEl = must('decimals');
+
+    const opAdd = must('opAdd');
+    const opSub = must('opSub');
+    const opMul = must('opMul');
+    const opDiv = must('opDiv');
+
+    const tbody = must('tbody');
+
+    const sOk = must('sOk');
+    const sBad = must('sBad');
+    const sDone = must('sDone');
+    const sTotal = must('sTotal');
+    const sAcc = must('sAcc');
+
+    // State
+    let soundOn = true;
+    let theme = localStorage.getItem('theme') || 'dark';
+
+    let quiz = []; // {a,b,op,answer,answered:boolean,correct:boolean,user:string,decimals:int}
+    let audioCtx = null;
+
+    function setTheme(t){
+      theme = t;
+      if(t === 'light'){
+        document.documentElement.dataset.theme = 'light';
+        btnTheme.textContent = 'Light';
+      }else{
+        delete document.documentElement.dataset.theme;
+        btnTheme.textContent = 'Dark';
+      }
+      localStorage.setItem('theme', t);
+    }
+
+    function setSound(on){
+      soundOn = on;
+      btnSound.textContent = 'Sound: ' + (on ? 'ON' : 'OFF');
+    }
+
+    function clampInt(n, lo, hi){
+      n = Number.isFinite(n) ? Math.trunc(n) : lo;
+      return Math.max(lo, Math.min(hi, n));
+    }
+
+    function pickOps(){
+      const ops = [];
+      if(opAdd.checked) ops.push('+');
+      if(opSub.checked) ops.push('-');
+      if(opMul.checked) ops.push('×');
+      if(opDiv.checked) ops.push('÷');
+      return ops;
+    }
+
+    function randInt(min, max){
+      return Math.floor(Math.random()*(max-min+1)) + min;
+    }
+
+    function formatOp(op){
+      // Display minus as normal '-' if you want; currently using '−' in UI is fine too.
+      if(op === '-') return '−';
+      return op;
+    }
+
+    function ensureAudio(){
+      if(audioCtx) return;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if(!AudioContext) return;
+      audioCtx = new AudioContext();
+    }
+
+    function beep(type){
+      if(!soundOn) return;
+      ensureAudio();
+      if(!audioCtx) return;
+
+      // Some browsers require resume on user gesture; try.
+      if(audioCtx.state === 'suspended'){
+        audioCtx.resume().catch(()=>{});
+      }
+
+      const now = audioCtx.currentTime;
+
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+
+      o.connect(g);
+      g.connect(audioCtx.destination);
+
+      // "correct": short high beep
+      // "wrong": lower buzzy double tone
+      if(type === 'ok'){
+        o.type = 'sine';
+        o.frequency.setValueAtTime(880, now);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.35, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+        o.start(now);
+        o.stop(now + 0.14);
+      } else {
+        o.type = 'square';
+        o.frequency.setValueAtTime(160, now);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.25, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.10);
+        o.start(now);
+        o.stop(now + 0.12);
+
+        // second tiny buzz
+        const o2 = audioCtx.createOscillator();
+        const g2 = audioCtx.createGain();
+        o2.connect(g2); g2.connect(audioCtx.destination);
+        o2.type = 'square';
+        o2.frequency.setValueAtTime(120, now + 0.13);
+        g2.gain.setValueAtTime(0.0001, now + 0.13);
+        g2.gain.exponentialRampToValueAtTime(0.22, now + 0.14);
+        g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.23);
+        o2.start(now + 0.13);
+        o2.stop(now + 0.25);
+      }
+    }
+
+    function makeQuestion(maxN, ops, divMode, decimals){
+      const op = ops[randInt(0, ops.length-1)];
+      let a, b, ans;
+
+      if(op === '+'){
+        a = randInt(0, maxN);
+        b = randInt(0, maxN);
+        ans = a + b;
+        return {a,b,op,answer: ans, decimals: 0};
+      }
+
+      if(op === '-'){
+        // avoid negative by default: make a >= b
+        a = randInt(0, maxN);
+        b = randInt(0, maxN);
+        if(b > a){ const t=a; a=b; b=t; }
+        ans = a - b;
+        return {a,b,op,answer: ans, decimals: 0};
+      }
+
+      if(op === '×'){
+        a = randInt(0, maxN);
+        b = randInt(0, maxN);
+        ans = a * b;
+        return {a,b,op,answer: ans, decimals: 0};
+      }
+
+      // Division
+      if(divMode === 'integer'){
+        // Create divisible problems: (a*b) ÷ b = a
+        b = randInt(1, Math.max(2, Math.min(maxN, 20)));  // keep divisor reasonable
+        a = randInt(0, maxN);
+        const left = a * b;
+        ans = a;
+        return {a:left, b, op:'÷', answer: ans, decimals: 0};
+      } else {
+        // allow decimals
+        a = randInt(0, maxN);
+        b = randInt(1, maxN || 1);
+        const raw = a / b;
+        const fixed = Number(raw.toFixed(decimals));
+        return {a,b,op:'÷', answer: fixed, decimals};
+      }
+    }
+
+    function renderTable(){
+      tbody.innerHTML = '';
+      quiz.forEach((q, i) => {
+        const tr = document.createElement('tr');
+
+        // #
+        const tdN = document.createElement('td');
+        tdN.innerHTML = `<span class="pill">#${i+1}</span>`;
+        tr.appendChild(tdN);
+
+        // Expression
+        const tdExpr = document.createElement('td');
+        tdExpr.className = 'expr';
+        tdExpr.textContent = `${q.a} ${formatOp(q.op)} ${q.b} =`;
+        tr.appendChild(tdExpr);
+
+        // Input
+        const tdIn = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.className = 'ansInput';
+        inp.type = 'tel';        // bàn phím số trên mobile
+        inp.inputMode = 'numeric';// still allow decimal input for ÷ decimal mode
+        inp.autocomplete = 'off';
+        inp.spellcheck = false;
+        inp.placeholder = 'Nhập… rồi Enter';
+        inp.dataset.index = String(i);
+        inp.value = q.user ?? '';
+        tdIn.appendChild(inp);
+        tr.appendChild(tdIn);
+
+        // Answer
+        const tdAns = document.createElement('td');
+        tdAns.className = 'resultCell';
+        tdAns.textContent = q.answered ? String(q.answer) : '—';
+        tr.appendChild(tdAns);
+
+        // Badge
+        const tdBadge = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = q.answered ? (q.correct ? 'ĐÚNG' : 'SAI') : '...';
+        if(q.answered) badge.classList.add(q.correct ? 'ok' : 'bad');
+        tdBadge.appendChild(badge);
+        tr.appendChild(tdBadge);
+
+        tbody.appendChild(tr);
+      });
+
+      // wire events for inputs
+      tbody.querySelectorAll('.ansInput').forEach(inp => {
+        inp.addEventListener('keydown', (e) => {
+          const idx = Number(inp.dataset.index);
+          if(e.key === 'Enter'){
+            e.preventDefault();
+            grade(idx);
+            focusNext(idx);
+            return;
+          }
+          // ✅ Mobile support: chấm khi bấm Done / Next
+inp.addEventListener('change', () => {
+  grade(idx);
+  focusNext(idx);
+});
+
+// ✅ Mobile support: chấm khi rời ô nhập
+inp.addEventListener('blur', () => {
+  grade(idx);
+});
+
+          // allow: backspace, arrows, tab, minus and dot (for decimal mode)
+          const allowed = ['Backspace','Delete','ArrowLeft','ArrowRight','Home','End','Tab'];
+          if(allowed.includes(e.key)) return;
+
+          // allow digits
+          if(/^\d$/.test(e.key)) return;
+
+          // allow '-' only if currently empty and operation is subtraction with negative allowed (not used) => block
+          // allow '.' for decimals if needed
+          if(e.key === '.' || e.key === ','){
+            const q = quiz[idx];
+            if(q.op === '÷' && q.decimals > 0) return;
+          }
+
+          // block everything else
+          e.preventDefault();
+        });
+      });
+    }
+
+    function normalizeNumberInput(s){
+      // accept comma as dot
+      return String(s ?? '').trim().replace(',', '.');
+    }
+
+    function grade(idx){
+      const row = tbody.querySelectorAll('tr')[idx];
+      if(!row) return;
+
+      const inp = row.querySelector('.ansInput');
+      const tdAns = row.children[3];
+      const tdBadge = row.children[4].querySelector('.badge');
+
+      const q = quiz[idx];
+      const userRaw = normalizeNumberInput(inp.value);
+      q.user = userRaw;
+
+      let userVal;
+      if(userRaw === ''){
+        // treat empty as not answered
+        q.answered = false;
+        q.correct = false;
+        tdAns.textContent = '—';
+        tdBadge.className = 'badge';
+        tdBadge.textContent = '...';
+        updateStats();
+        return;
+      }
+
+      // parse
+      if(q.op === '÷' && q.decimals > 0){
+        userVal = Number(userRaw);
+        if(Number.isNaN(userVal)){
+          // invalid number
+          q.answered = true;
+          q.correct = false;
+        } else {
+          // compare with tolerance for float
+          const tol = Math.pow(10, -(q.decimals)) / 2 + 1e-12;
+          q.answered = true;
+          q.correct = Math.abs(userVal - q.answer) <= tol;
+        }
+      } else {
+        // integer ops
+        userVal = Number(userRaw);
+        if(!Number.isFinite(userVal) || !Number.isInteger(userVal)){
+          q.answered = true;
+          q.correct = false;
+        } else {
+          q.answered = true;
+          q.correct = (userVal === q.answer);
+        }
+      }
+
+      // update UI in this row
+      tdAns.textContent = String(q.answer);
+      tdBadge.className = 'badge ' + (q.correct ? 'ok' : 'bad');
+      tdBadge.textContent = q.correct ? 'ĐÚNG' : 'SAI';
+
+      beep(q.correct ? 'ok' : 'bad');
+      updateStats();
+    }
+
+    function focusNext(idx){
+      const inputs = Array.from(tbody.querySelectorAll('.ansInput'));
+      const next = inputs[idx+1];
+      if(next){
+        next.focus();
+        next.select();
+      }
+    }
+
+    function updateStats(){
+      const total = quiz.length;
+      const answered = quiz.filter(q => q.answered).length;
+      const ok = quiz.filter(q => q.answered && q.correct).length;
+      const bad = quiz.filter(q => q.answered && !q.correct).length;
+      const acc = answered === 0 ? 0 : Math.round((ok / answered) * 100);
+
+      sOk.textContent = String(ok);
+      sBad.textContent = String(bad);
+      sDone.textContent = String(answered);
+      sTotal.textContent = String(total);
+      sAcc.textContent = String(acc) + '%';
+    }
+
+    function buildQuiz(){
+      const ops = pickOps();
+      if(ops.length === 0){
+        alert('Bạn cần chọn ít nhất 1 phép tính (+ − × ÷).');
+        return;
+      }
+
+      const count = clampInt(parseInt(countEl.value,10), 5, 200);
+      const maxN = clampInt(parseInt(maxNEl.value,10), 5, 999);
+      const divMode = divModeEl.value;
+      const decimals = clampInt(parseInt(decimalsEl.value,10), 0, 6);
+
+      countEl.value = count;
+      maxNEl.value = maxN;
+
+      quiz = [];
+      for(let i=0;i<count;i++){
+        const q = makeQuestion(maxN, ops, divMode, decimals);
+        quiz.push({
+          ...q,
+          answered:false,
+          correct:false,
+          user:''
+        });
+      }
+
+      renderTable();
+      updateStats();
+
+      // focus first input
+      setTimeout(() => {
+        const first = tbody.querySelector('.ansInput');
+        if(first){ first.focus(); first.select(); }
+      }, 0);
+    }
+
+    function resetAnswers(){
+      quiz.forEach(q => { q.answered=false; q.correct=false; q.user=''; });
+      renderTable();
+      updateStats();
+      setTimeout(() => {
+        const first = tbody.querySelector('.ansInput');
+        if(first){ first.focus(); first.select(); }
+      }, 0);
+    }
+
+    // Boot
+    setTheme(theme);
+    setSound(true);
+
+    btnTheme.addEventListener('click', () => {
+      const isLight = document.documentElement.dataset.theme === 'light';
+      setTheme(isLight ? 'dark' : 'light');
+    });
+
+    btnSound.addEventListener('click', () => setSound(!soundOn));
+
+    btnNew.addEventListener('click', buildQuiz);
+    btnReset.addEventListener('click', resetAnswers);
+
+    btnFocus.addEventListener('click', () => {
+      const first = tbody.querySelector('.ansInput');
+      if(first){ first.focus(); first.select(); }
+    });
+
+    // auto-generate at start
+    buildQuiz();
+  </script>
+</body>
+</html>
